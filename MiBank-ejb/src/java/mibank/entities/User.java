@@ -1,0 +1,258 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package mibank.entities;
+
+import java.io.Serializable;
+import java.util.Date;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+
+/**
+ *
+ * @author ubuntie
+ */
+@Entity
+@Table(name = "User")
+@XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u")
+    , @NamedQuery(name = "User.findByAccountBank", query = "SELECT u FROM User u WHERE u.userPK.accountBank = :accountBank")
+    , @NamedQuery(name = "User.findByAccountOffice", query = "SELECT u FROM User u WHERE u.userPK.accountOffice = :accountOffice")
+    , @NamedQuery(name = "User.findByAccountControl", query = "SELECT u FROM User u WHERE u.userPK.accountControl = :accountControl")
+    , @NamedQuery(name = "User.findByAccountId", query = "SELECT u FROM User u WHERE u.userPK.accountId = :accountId")
+    , @NamedQuery(name = "User.findByDni", query = "SELECT u FROM User u WHERE u.dni = :dni")
+    , @NamedQuery(name = "User.findByPassword", query = "SELECT u FROM User u WHERE u.password = :password")
+    , @NamedQuery(name = "User.findByName", query = "SELECT u FROM User u WHERE u.name = :name")
+    , @NamedQuery(name = "User.findBySurname", query = "SELECT u FROM User u WHERE u.surname = :surname")
+    , @NamedQuery(name = "User.findByAddress", query = "SELECT u FROM User u WHERE u.address = :address")
+    , @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email")
+    , @NamedQuery(name = "User.findByPhone", query = "SELECT u FROM User u WHERE u.phone = :phone")
+    , @NamedQuery(name = "User.findByPhonePrefix", query = "SELECT u FROM User u WHERE u.phonePrefix = :phonePrefix")
+    , @NamedQuery(name = "User.findByCreatedAt", query = "SELECT u FROM User u WHERE u.createdAt = :createdAt")
+    , @NamedQuery(name = "User.findByUpdatedAt", query = "SELECT u FROM User u WHERE u.updatedAt = :updatedAt")})
+public class User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    @EmbeddedId
+    protected UserPK userPK;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 9)
+    @Column(name = "dni")
+    private String dni;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 128)
+    @Column(name = "password")
+    private String password;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "name")
+    private String name;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "surname")
+    private String surname;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "address")
+    private String address;
+    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "email")
+    private String email;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "phone")
+    private int phone;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 5)
+    @Column(name = "phone_prefix")
+    private String phonePrefix;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+    @JoinColumns({
+        @JoinColumn(name = "account_bank", referencedColumnName = "bank", insertable = false, updatable = false)
+        , @JoinColumn(name = "account_office", referencedColumnName = "office", insertable = false, updatable = false)
+        , @JoinColumn(name = "account_control", referencedColumnName = "control", insertable = false, updatable = false)
+        , @JoinColumn(name = "account_id", referencedColumnName = "id", insertable = false, updatable = false)})
+    @OneToOne(optional = false)
+    private Account account;
+
+    public User() {
+    }
+
+    public User(UserPK userPK) {
+        this.userPK = userPK;
+    }
+
+    public User(UserPK userPK, String dni, String password, String name, String surname, String address, String email, int phone, String phonePrefix, Date createdAt, Date updatedAt) {
+        this.userPK = userPK;
+        this.dni = dni;
+        this.password = password;
+        this.name = name;
+        this.surname = surname;
+        this.address = address;
+        this.email = email;
+        this.phone = phone;
+        this.phonePrefix = phonePrefix;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public User(int accountBank, int accountOffice, int accountControl, int accountId) {
+        this.userPK = new UserPK(accountBank, accountOffice, accountControl, accountId);
+    }
+
+    public UserPK getUserPK() {
+        return userPK;
+    }
+
+    public void setUserPK(UserPK userPK) {
+        this.userPK = userPK;
+    }
+
+    public String getDni() {
+        return dni;
+    }
+
+    public void setDni(String dni) {
+        this.dni = dni;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public int getPhone() {
+        return phone;
+    }
+
+    public void setPhone(int phone) {
+        this.phone = phone;
+    }
+
+    public String getPhonePrefix() {
+        return phonePrefix;
+    }
+
+    public void setPhonePrefix(String phonePrefix) {
+        this.phonePrefix = phonePrefix;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (userPK != null ? userPK.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof User)) {
+            return false;
+        }
+        User other = (User) object;
+        if ((this.userPK == null && other.userPK != null) || (this.userPK != null && !this.userPK.equals(other.userPK))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "mibank.entities.User[ userPK=" + userPK + " ]";
+    }
+    
+}
