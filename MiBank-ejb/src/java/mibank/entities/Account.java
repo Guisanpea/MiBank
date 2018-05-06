@@ -13,10 +13,11 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -55,10 +56,13 @@ public class Account implements Serializable {
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account")
+    @JoinColumn(name = "user_dni", referencedColumnName = "dni")
+    @ManyToOne(optional = false)
     private User user;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "account")
     private Collection<Transfer> transferCollection;
+    @OneToMany(mappedBy = "account1")
+    private Collection<Transfer> transferCollection1;
 
     public Account() {
     }
@@ -118,6 +122,15 @@ public class Account implements Serializable {
         this.transferCollection = transferCollection;
     }
 
+    @XmlTransient
+    public Collection<Transfer> getTransferCollection1() {
+        return transferCollection1;
+    }
+
+    public void setTransferCollection1(Collection<Transfer> transferCollection1) {
+        this.transferCollection1 = transferCollection1;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -140,7 +153,7 @@ public class Account implements Serializable {
 
     @Override
     public String toString() {
-        return "mibank.entities.Account[ accountPK=" + accountPK + " ]";
+        return "mibank.ejb.Account[ accountPK=" + accountPK + " ]";
     }
     
 }

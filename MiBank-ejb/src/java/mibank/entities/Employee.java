@@ -111,7 +111,7 @@ public class Employee implements Serializable {
 
     @Override
     public String toString() {
-        return "mibank.entities.Employee[ id=" + id + " ]";
+        return "mibank.ejb.Employee[ id=" + id + " ]";
     }
     
 }

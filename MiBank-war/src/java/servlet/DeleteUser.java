@@ -6,7 +6,7 @@
 package servlet;
 
 import java.io.IOException;
-import static java.util.Objects.nonNull;
+import java.io.PrintWriter;
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -15,23 +15,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import mibank.ejb.UserFacade;
-import mibank.entities.Account;
 import mibank.entities.User;
-import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  *
  * @author ubuntie
  */
-@WebServlet(name = "CreateUser", urlPatterns = {"/CreateUser"})
-public class CreateUser extends HttpServlet {
-    
-    private int bankId = 9313;
-    private int officeId = 1998;
+@WebServlet(name = "DeleteUser", urlPatterns = {"/deleteUser"})
+public class DeleteUser extends HttpServlet {
 
     @EJB
-    private UserFacade userFacade;
-
+    UserFacade userFacade;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -45,31 +39,14 @@ public class CreateUser extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         
-        if (! userExist(request)){
-            createNewUser(request);
-        }
+        String dni = request.getParameter("dni");
         
-        RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/employee");
+        User toDelete = userFacade.find(dni);
+        userFacade.remove(toDelete);
+        
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/employee");
         
         dispatcher.forward(request, response);
-    }
-
-    private void createNewUser(HttpServletRequest request) throws NumberFormatException {
-        User newUser = new User();
-        String hashPassword = DigestUtils.sha512Hex(request.getParameter("password"));
-        
-        newUser.setDni(request.getParameter("dni"));
-        newUser.setName(request.getParameter("name"));
-        newUser.setSurname(request.getParameter("surname"));
-        newUser.setEmail(request.getParameter("mail"));
-        newUser.setPhone(Integer.valueOf(request.getParameter("phone")));
-        newUser.setPhonePrefix(request.getParameter("phone_prefix"));
-        newUser.setAddress(request.getParameter("address"));
-        newUser.setPassword(hashPassword);
-        
-        addAccount(newUser);
-        
-        userFacade.create(newUser);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -110,20 +87,5 @@ public class CreateUser extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
-    private boolean userExist(HttpServletRequest request) {
-        User possibleUser = userFacade.find(request.getParameter("dni"));
-        return nonNull(possibleUser);
-    }
-
-    private void addAccount(User user) {
-        Account userAccount = new Account();
-        userAccount.setCurrency("EUR");
-        userAccount.setUser(user);
-    }
-
-    private void generateHash(String password, User newUser) {
-        
-    }
 
 }

@@ -6,22 +6,23 @@
 package mibank.entities;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
+import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -32,10 +33,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u")
-    , @NamedQuery(name = "User.findByAccountBank", query = "SELECT u FROM User u WHERE u.userPK.accountBank = :accountBank")
-    , @NamedQuery(name = "User.findByAccountOffice", query = "SELECT u FROM User u WHERE u.userPK.accountOffice = :accountOffice")
-    , @NamedQuery(name = "User.findByAccountControl", query = "SELECT u FROM User u WHERE u.userPK.accountControl = :accountControl")
-    , @NamedQuery(name = "User.findByAccountId", query = "SELECT u FROM User u WHERE u.userPK.accountId = :accountId")
     , @NamedQuery(name = "User.findByDni", query = "SELECT u FROM User u WHERE u.dni = :dni")
     , @NamedQuery(name = "User.findByPassword", query = "SELECT u FROM User u WHERE u.password = :password")
     , @NamedQuery(name = "User.findByName", query = "SELECT u FROM User u WHERE u.name = :name")
@@ -49,8 +46,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @EmbeddedId
-    protected UserPK userPK;
+    @Id
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 9)
@@ -92,32 +88,24 @@ public class User implements Serializable {
     @Column(name = "phone_prefix")
     private String phonePrefix;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
-    @JoinColumns({
-        @JoinColumn(name = "account_bank", referencedColumnName = "bank", insertable = false, updatable = false)
-        , @JoinColumn(name = "account_office", referencedColumnName = "office", insertable = false, updatable = false)
-        , @JoinColumn(name = "account_control", referencedColumnName = "control", insertable = false, updatable = false)
-        , @JoinColumn(name = "account_id", referencedColumnName = "id", insertable = false, updatable = false)})
-    @OneToOne(optional = false)
-    private Account account;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private Collection<Account> accountCollection;
 
     public User() {
     }
 
-    public User(UserPK userPK) {
-        this.userPK = userPK;
+    public User(String dni) {
+        this.dni = dni;
     }
 
-    public User(UserPK userPK, String dni, String password, String name, String surname, String address, String email, int phone, String phonePrefix, Date createdAt, Date updatedAt) {
-        this.userPK = userPK;
+    public User(String dni, String password, String name, String surname, String address, String email, int phone, String phonePrefix, Date createdAt, Date updatedAt) {
         this.dni = dni;
         this.password = password;
         this.name = name;
@@ -128,18 +116,6 @@ public class User implements Serializable {
         this.phonePrefix = phonePrefix;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-    }
-
-    public User(int accountBank, int accountOffice, int accountControl, int accountId) {
-        this.userPK = new UserPK(accountBank, accountOffice, accountControl, accountId);
-    }
-
-    public UserPK getUserPK() {
-        return userPK;
-    }
-
-    public void setUserPK(UserPK userPK) {
-        this.userPK = userPK;
     }
 
     public String getDni() {
@@ -222,18 +198,19 @@ public class User implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public Account getAccount() {
-        return account;
+    @XmlTransient
+    public Collection<Account> getAccountCollection() {
+        return accountCollection;
     }
 
-    public void setAccount(Account account) {
-        this.account = account;
+    public void setAccountCollection(Collection<Account> accountCollection) {
+        this.accountCollection = accountCollection;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (userPK != null ? userPK.hashCode() : 0);
+        hash += (dni != null ? dni.hashCode() : 0);
         return hash;
     }
 
@@ -244,7 +221,7 @@ public class User implements Serializable {
             return false;
         }
         User other = (User) object;
-        if ((this.userPK == null && other.userPK != null) || (this.userPK != null && !this.userPK.equals(other.userPK))) {
+        if ((this.dni == null && other.dni != null) || (this.dni != null && !this.dni.equals(other.dni))) {
             return false;
         }
         return true;
@@ -252,7 +229,7 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "mibank.entities.User[ userPK=" + userPK + " ]";
+        return "mibank.ejb.User[ dni=" + dni + " ]";
     }
     
 }

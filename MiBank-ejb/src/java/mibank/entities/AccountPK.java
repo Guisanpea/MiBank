@@ -111,7 +111,7 @@ public class AccountPK implements Serializable {
 
     @Override
     public String toString() {
-        return "mibank.entities.AccountPK[ bank=" + bank + ", office=" + office + ", control=" + control + ", id=" + id + " ]";
+        return "mibank.ejb.AccountPK[ bank=" + bank + ", office=" + office + ", control=" + control + ", id=" + id + " ]";
     }
     
 }

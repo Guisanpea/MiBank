@@ -65,6 +65,13 @@ public class Transfer implements Serializable {
         , @JoinColumn(name = "account_id", referencedColumnName = "id")})
     @ManyToOne(optional = false)
     private Account account;
+    @JoinColumns({
+        @JoinColumn(name = "from_account_bank", referencedColumnName = "bank")
+        , @JoinColumn(name = "from_account_office", referencedColumnName = "office")
+        , @JoinColumn(name = "from_account_control", referencedColumnName = "control")
+        , @JoinColumn(name = "from_account_id", referencedColumnName = "id")})
+    @ManyToOne
+    private Account account1;
     @JoinColumn(name = "employee_involved", referencedColumnName = "id")
     @ManyToOne
     private Employee employeeInvolved;
@@ -129,6 +136,14 @@ public class Transfer implements Serializable {
         this.account = account;
     }
 
+    public Account getAccount1() {
+        return account1;
+    }
+
+    public void setAccount1(Account account1) {
+        this.account1 = account1;
+    }
+
     public Employee getEmployeeInvolved() {
         return employeeInvolved;
     }
@@ -159,7 +174,7 @@ public class Transfer implements Serializable {
 
     @Override
     public String toString() {
-        return "mibank.entities.Transfer[ id=" + id + " ]";
+        return "mibank.ejb.Transfer[ id=" + id + " ]";
     }
     
 }
