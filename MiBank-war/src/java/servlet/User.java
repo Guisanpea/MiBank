@@ -6,37 +6,31 @@
 package servlet;
 
 import java.io.IOException;
-import static java.util.Objects.nonNull;
+import java.io.PrintWriter;
+import java.util.List;
+import static java.util.Objects.isNull;
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import mibank.ejb.AccountFacade;
-import mibank.ejb.UserFacade;
-import mibank.entities.Account;
-import mibank.entities.AccountPK;
-import mibank.entities.User;
-import org.apache.commons.codec.digest.DigestUtils;
+import javax.servlet.http.HttpSession;
+import mibank.ejb.TransferFacade;
+import mibank.entities.Transfer;
+import static support.SessionSupport.checkSession;
 
 /**
  *
  * @author ubuntie
  */
-@WebServlet(name = "CreateUser", urlPatterns = {"/CreateUser"})
-public class CreateUser extends HttpServlet {
-    
-    final private int bankId = 9313;
-    final private int officeId = 1998;
-    final private int control = 05;
+@WebServlet(name = "User", urlPatterns = {"/user"})
+public class User extends HttpServlet {
 
     @EJB
-    private UserFacade userFacade;
-    
-    @EJB
-    private AccountFacade accountFacade;
+    private TransferFacade transferFacade;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -50,34 +44,22 @@ public class CreateUser extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
-        if (! userExist(request)){
-            createNewUser(request);
+        HttpSession session = request.getSession();
+
+        if (checkSession(getServletContext(), session, request, response)) {
+            mibank.entities.User user = (mibank.entities.User) session.getAttribute("user");
+            List<Transfer> transferList = transferFacade.getByUser(user);
+
+            request.setAttribute("transferList", transferList);
+
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/user.jsp");
+            dispatcher.forward(request, response);
         }
-        
-        RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/employee");
-        
-        dispatcher.forward(request, response);
+
     }
 
-    private void createNewUser(HttpServletRequest request) throws NumberFormatException {
-        User newUser = new User();
-        String hashPassword = DigestUtils.sha512Hex(request.getParameter("password"));
-        
-        newUser.setDni(request.getParameter("dni"));
-        newUser.setName(request.getParameter("name"));
-        newUser.setSurname(request.getParameter("surname"));
-        newUser.setEmail(request.getParameter("mail"));
-        newUser.setPhone(Integer.valueOf(request.getParameter("phone")));
-        newUser.setPhonePrefix(request.getParameter("phone_prefix"));
-        newUser.setAddress(request.getParameter("address"));
-        newUser.setPassword(hashPassword);
-                
-        userFacade.create(newUser);
-        addAccount(newUser);
-    }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -115,18 +97,5 @@ public class CreateUser extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
-    private boolean userExist(HttpServletRequest request) {
-        User possibleUser = userFacade.find(request.getParameter("dni"));
-        return nonNull(possibleUser);
-    }
-
-    private void addAccount(User user) {
-        Account userAccount = new Account(new AccountPK(bankId, officeId, control));
-        userAccount.setCurrency("EUR");
-        userAccount.setUser(user);
-        
-        accountFacade.create(userAccount);
-    }
 
 }

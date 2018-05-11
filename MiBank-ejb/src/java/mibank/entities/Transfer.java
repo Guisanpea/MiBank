@@ -6,7 +6,9 @@
 package mibank.entities;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Date;
+import static java.util.Objects.nonNull;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,11 +35,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Transfer.findAll", query = "SELECT t FROM Transfer t")
     , @NamedQuery(name = "Transfer.findById", query = "SELECT t FROM Transfer t WHERE t.id = :id")
+    , @NamedQuery(name = "Transfer.findByDNI", query = "SELECT t FROM Transfer t WHERE t.account.user.dni = :dni")
     , @NamedQuery(name = "Transfer.findByAccountFrom", query = "SELECT t FROM Transfer t WHERE t.accountFrom = :accountFrom")
     , @NamedQuery(name = "Transfer.findByAmount", query = "SELECT t FROM Transfer t WHERE t.amount = :amount")
     , @NamedQuery(name = "Transfer.findByDescription", query = "SELECT t FROM Transfer t WHERE t.description = :description")
     , @NamedQuery(name = "Transfer.findByCreatedAt", query = "SELECT t FROM Transfer t WHERE t.createdAt = :createdAt")})
 public class Transfer implements Serializable {
+
+    @Column(name = "amount")
+    private BigInteger amount;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -45,13 +51,6 @@ public class Transfer implements Serializable {
     @NotNull
     @Column(name = "id")
     private Integer id;
-    @Size(max = 24)
-    @Column(name = "account_from")
-    private String accountFrom;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "amount")
-    private long amount;
     @Size(max = 45)
     @Column(name = "description")
     private String description;
@@ -71,7 +70,7 @@ public class Transfer implements Serializable {
         , @JoinColumn(name = "from_account_control", referencedColumnName = "control")
         , @JoinColumn(name = "from_account_id", referencedColumnName = "id")})
     @ManyToOne
-    private Account account1;
+    private Account accountFrom;
     @JoinColumn(name = "employee_involved", referencedColumnName = "id")
     @ManyToOne
     private Employee employeeInvolved;
@@ -83,7 +82,7 @@ public class Transfer implements Serializable {
         this.id = id;
     }
 
-    public Transfer(Integer id, long amount) {
+    public Transfer(Integer id, BigInteger amount) {
         this.id = id;
         this.amount = amount;
     }
@@ -96,21 +95,6 @@ public class Transfer implements Serializable {
         this.id = id;
     }
 
-    public String getAccountFrom() {
-        return accountFrom;
-    }
-
-    public void setAccountFrom(String accountFrom) {
-        this.accountFrom = accountFrom;
-    }
-
-    public long getAmount() {
-        return amount;
-    }
-
-    public void setAmount(long amount) {
-        this.amount = amount;
-    }
 
     public String getDescription() {
         return description;
@@ -136,12 +120,19 @@ public class Transfer implements Serializable {
         this.account = account;
     }
 
-    public Account getAccount1() {
-        return account1;
+    public Account getAccountFrom() {
+        return accountFrom;
+    }
+    public String getOrigin(){
+        return nonNull(accountFrom) ? accountFrom.toString() : getType();
     }
 
-    public void setAccount1(Account account1) {
-        this.account1 = account1;
+    private String getType() {
+        return amount.compareTo(BigInteger.ZERO) < 0 ? "STAKE" : "SETTLEMENT";
+    }
+
+    public void setAccountFrom(Account accountFrom) {
+        this.accountFrom = accountFrom;
     }
 
     public Employee getEmployeeInvolved() {
@@ -175,6 +166,14 @@ public class Transfer implements Serializable {
     @Override
     public String toString() {
         return "mibank.ejb.Transfer[ id=" + id + " ]";
+    }
+
+    public BigInteger getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigInteger amount) {
+        this.amount = amount;
     }
     
 }

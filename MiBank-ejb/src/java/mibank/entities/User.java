@@ -45,6 +45,9 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "User.findByUpdatedAt", query = "SELECT u FROM User u WHERE u.updatedAt = :updatedAt")})
 public class User implements Serializable {
 
+    @Column(name = "phone")
+    private Integer phone;
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -78,10 +81,6 @@ public class User implements Serializable {
     @Size(min = 1, max = 45)
     @Column(name = "email")
     private String email;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "phone")
-    private int phone;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 5)
@@ -166,13 +165,6 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public int getPhone() {
-        return phone;
-    }
-
-    public void setPhone(int phone) {
-        this.phone = phone;
-    }
 
     public String getPhonePrefix() {
         return phonePrefix;
@@ -230,6 +222,14 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "mibank.ejb.User[ dni=" + dni + " ]";
+    }
+
+    public Integer getPhone() {
+        return phone;
+    }
+
+    public void setPhone(Integer phone) {
+        this.phone = phone;
     }
     
 }

@@ -6,37 +6,40 @@
 package servlet;
 
 import java.io.IOException;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import java.util.concurrent.TimeUnit;
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import mibank.ejb.AccountFacade;
+import javax.servlet.http.HttpSession;
+import mibank.ejb.EmployeeFacade;
 import mibank.ejb.UserFacade;
-import mibank.entities.Account;
-import mibank.entities.AccountPK;
 import mibank.entities.User;
+import mibank.entities.Employee;
+import org.apache.commons.codec.cli.Digest;
 import org.apache.commons.codec.digest.DigestUtils;
+import support.SessionSupport.AgentType;
 
 /**
  *
  * @author ubuntie
  */
-@WebServlet(name = "CreateUser", urlPatterns = {"/CreateUser"})
-public class CreateUser extends HttpServlet {
-    
-    final private int bankId = 9313;
-    final private int officeId = 1998;
-    final private int control = 05;
+public class Login extends HttpServlet {
+
+    String id;
+    String password;
+    AgentType agentType;
+    String outputPage;
 
     @EJB
     private UserFacade userFacade;
     
     @EJB
-    private AccountFacade accountFacade;
+    private EmployeeFacade employeeFacade;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -50,31 +53,51 @@ public class CreateUser extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
-        if (! userExist(request)){
-            createNewUser(request);
+
+        initialize(request);
+
+        if (agentType == AgentType.USER) {
+            userLogin(request);
+        } else {
+            employeeLogin(request);
         }
-        
-        RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher("/employee");
-        
+
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(outputPage);
         dispatcher.forward(request, response);
     }
 
-    private void createNewUser(HttpServletRequest request) throws NumberFormatException {
-        User newUser = new User();
-        String hashPassword = DigestUtils.sha512Hex(request.getParameter("password"));
-        
-        newUser.setDni(request.getParameter("dni"));
-        newUser.setName(request.getParameter("name"));
-        newUser.setSurname(request.getParameter("surname"));
-        newUser.setEmail(request.getParameter("mail"));
-        newUser.setPhone(Integer.valueOf(request.getParameter("phone")));
-        newUser.setPhonePrefix(request.getParameter("phone_prefix"));
-        newUser.setAddress(request.getParameter("address"));
-        newUser.setPassword(hashPassword);
-                
-        userFacade.create(newUser);
-        addAccount(newUser);
+    private void userLogin(HttpServletRequest request) {
+        User user = userFacade.find(id);
+        if (nonNull(user) && correctPassword(user, password)) {
+            HttpSession newSession = request.getSession(true);
+            newSession.setAttribute("user", user);
+            newSession.setAttribute("agentKind", AgentType.USER);
+            newSession.setMaxInactiveInterval((int) TimeUnit.MINUTES.toSeconds(15));
+            outputPage = "/user";
+        } else {
+            request.setAttribute("incorrect", "");
+            outputPage = "/index.jsp";
+        }
+    }
+    
+    private void employeeLogin(HttpServletRequest request) {
+        Employee employee = employeeFacade.find(Integer.valueOf(id));
+        if (nonNull(employee) && correctPassword(employee, password)) {
+            HttpSession newSession = request.getSession(true);
+            newSession.setAttribute("employee", employee);
+            newSession.setAttribute("agentKind", AgentType.EMPLOYEE);
+            newSession.setMaxInactiveInterval((int) TimeUnit.MINUTES.toSeconds(15));
+            outputPage = "/employee";
+        } else {
+            request.setAttribute("incorrect", "");
+            outputPage = "/index.jsp";
+        }
+    }
+
+    private void initialize(HttpServletRequest request) {
+        id = request.getParameter("dni");
+        password = request.getParameter("password");
+        agentType = isNull(request.getParameter("imEmployee")) ? AgentType.USER : AgentType.EMPLOYEE;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -116,17 +139,11 @@ public class CreateUser extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private boolean userExist(HttpServletRequest request) {
-        User possibleUser = userFacade.find(request.getParameter("dni"));
-        return nonNull(possibleUser);
+    private boolean correctPassword(User user, String password) {
+        return user.getPassword().equals(DigestUtils.sha512Hex(password));
     }
-
-    private void addAccount(User user) {
-        Account userAccount = new Account(new AccountPK(bankId, officeId, control));
-        userAccount.setCurrency("EUR");
-        userAccount.setUser(user);
-        
-        accountFacade.create(userAccount);
+    
+    private boolean correctPassword(Employee employee, String password) {
+        return employee.getPassword().equalsIgnoreCase(DigestUtils.sha512Hex(password));
     }
-
 }

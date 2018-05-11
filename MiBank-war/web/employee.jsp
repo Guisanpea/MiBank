@@ -1,12 +1,12 @@
 <%@page import="java.util.List"%>
 <%@page import="mibank.entities.User"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<% List<User> userList = (List<User>) request.getAttribute("userList"); %>
+<% List<User> userList = (List<User>) request.getAttribute("userList");%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>4Bank - Employee</title>
+        <title>MiBank - Employee</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     </head>
@@ -15,9 +15,10 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-4" style="padding-right:20px; padding-left:20px; border-right: 1px solid #ccc;">
-                    <h1>Create user:</h1>
-                    </br>
-
+                    <div class="row">
+                        <h1>Create user:</h1>
+                        <br/>
+                    </div>
                     <form action="CreateUser" method="post">
                         <div class="form-group row">
                             <label for="name" class="form-check-label col-md-3 col-form-label">Name:</label>
@@ -51,7 +52,7 @@
                             <label for="password" class="form-check-label col-md-3 col-form-label">Password: </label>
                             <input type="password" class="form-control col-md-6" name="password">
                         </div>
-                         
+
                         <button type="submit" class="btn btn-primary">Create User</button>   
                     </form>
                 </div>

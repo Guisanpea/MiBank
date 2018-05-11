@@ -10,5 +10,5 @@
         <property name="URL" value="jdbc:mysql://localhost:3306/MiBankDB?zeroDateTimeBehavior=convertToNull"/>
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
     </jdbc-connection-pool>
-    <jdbc-resource enabled="true" jndi-name="java:module/MiBank" object-type="user" pool-name="mysql_MiBankDB_MiBankPool"/>
+    <jdbc-resource enabled="true" jndi-name="jdbc/MiBank" object-type="user" pool-name="mysql_MiBankDB_MiBankPool"/>
 </resources>

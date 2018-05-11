@@ -31,18 +31,16 @@ public class AccountPK implements Serializable {
     @Column(name = "control")
     private int control;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id")
     private int id;
 
     public AccountPK() {
     }
 
-    public AccountPK(int bank, int office, int control, int id) {
+    public AccountPK(int bank, int office, int control) {
         this.bank = bank;
         this.office = office;
         this.control = control;
-        this.id = id;
     }
 
     public int getBank() {
@@ -111,7 +109,7 @@ public class AccountPK implements Serializable {
 
     @Override
     public String toString() {
-        return "mibank.ejb.AccountPK[ bank=" + bank + ", office=" + office + ", control=" + control + ", id=" + id + " ]";
+        return String.format("%d%d%d%d", bank, office, control, id);
     }
-    
+
 }

@@ -40,5 +40,8 @@
                 <id>dist</id>
             </reference>
         </references>
+        <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>MiBank</word>
+        </spellchecker-wordlist>
     </configuration>
 </project>

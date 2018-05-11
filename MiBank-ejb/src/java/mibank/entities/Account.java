@@ -6,6 +6,7 @@
 package mibank.entities;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -39,8 +40,13 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Account.findByOffice", query = "SELECT a FROM Account a WHERE a.accountPK.office = :office")
     , @NamedQuery(name = "Account.findByControl", query = "SELECT a FROM Account a WHERE a.accountPK.control = :control")
     , @NamedQuery(name = "Account.findById", query = "SELECT a FROM Account a WHERE a.accountPK.id = :id")
+    , @NamedQuery(name = "Account.findByFullNumber", query = "SELECT a FROM Account a WHERE a.accountPK.bank = :bank"
+            + "                                                                       AND a.accountPK.office = :office"
+            + "                                                                       AND a.accountPK.control = :control"
+            + "                                                                       AND a.accountPK.id = :id")    
     , @NamedQuery(name = "Account.findByCurrency", query = "SELECT a FROM Account a WHERE a.currency = :currency")
-    , @NamedQuery(name = "Account.findByCreatedAt", query = "SELECT a FROM Account a WHERE a.createdAt = :createdAt")})
+    , @NamedQuery(name = "Account.findByCreatedAt", query = "SELECT a FROM Account a WHERE a.createdAt = :createdAt")
+    , @NamedQuery(name = "Account.findByUser", query = "SELECT a FROM Account a WHERE a.user = :user")})
 public class Account implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -52,8 +58,7 @@ public class Account implements Serializable {
     @Column(name = "currency")
     private String currency;
     @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_at")
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @JoinColumn(name = "user_dni", referencedColumnName = "dni")
@@ -61,7 +66,7 @@ public class Account implements Serializable {
     private User user;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "account")
     private Collection<Transfer> transferCollection;
-    @OneToMany(mappedBy = "account1")
+    @OneToMany(mappedBy = "accountFrom")
     private Collection<Transfer> transferCollection1;
 
     public Account() {
@@ -77,8 +82,8 @@ public class Account implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Account(int bank, int office, int control, int id) {
-        this.accountPK = new AccountPK(bank, office, control, id);
+    public Account(int bank, int office, int control) {
+        this.accountPK = new AccountPK(bank, office, control);
     }
 
     public AccountPK getAccountPK() {
@@ -154,6 +159,10 @@ public class Account implements Serializable {
     @Override
     public String toString() {
         return "mibank.ejb.Account[ accountPK=" + accountPK + " ]";
+    }
+
+    public BigInteger getBalance() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }
