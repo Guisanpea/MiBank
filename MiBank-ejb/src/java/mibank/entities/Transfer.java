@@ -83,7 +83,7 @@ public class Transfer implements Serializable {
     private Integer fromAccountControl;
     @Column(name = "from_account_id")
     private Integer fromAccountId;
-    @Column(name = "created_at")
+    @Column(name = "created_at", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @JoinColumn(name = "account_id", referencedColumnName = "id")
