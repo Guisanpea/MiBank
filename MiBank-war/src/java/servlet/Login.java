@@ -140,10 +140,12 @@ public class Login extends HttpServlet {
     }// </editor-fold>
 
     private boolean correctPassword(User user, String password) {
-        return user.getPassword().equals(DigestUtils.sha512Hex(password));
+        return user.getPassword().equalsIgnoreCase(DigestUtils.sha512Hex(password));
     }
     
     private boolean correctPassword(Employee employee, String password) {
+        System.out.println(employee.getPassword());
+        System.out.println(DigestUtils.sha512Hex(password));
         return employee.getPassword().equalsIgnoreCase(DigestUtils.sha512Hex(password));
     }
 }

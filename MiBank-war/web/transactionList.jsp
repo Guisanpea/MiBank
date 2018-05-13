@@ -22,16 +22,18 @@
     <tbody>
         <%
             for (Transfer transfer : transferList) {
-                Employee involved = transfer.getEmployeeInvolved();
                 String tranferTypeColor = transfer.getAmount() > 0
                         ? "bg-success text-white" : "bg-danger text-white";
+                String fromAccount = Objects.nonNull(transfer.getFromAccountId()) ?
+                        transfer.getFromAccountBank().toString()
+                   +    transfer.getFromAccountOffice().toString()
+                   +    transfer.getFromAccountControl().toString()
+                   +    transfer.getFromAccountId()
+                   :    "Bank Movement";
         %>
         <tr>
             <th scope="row"><%= df.format(transfer.getCreatedAt())%></th>
-            <td> <%= transfer.getFromAccountBank().toString()
-                   + transfer.getFromAccountOffice().toString()
-                   + transfer.getFromAccountControl().toString()
-                   + transfer.getFromAccountId()%></td>
+            <td> <%= fromAccount%></td>
             <td class="<%=tranferTypeColor%>" > <%= Math.abs(transfer.getAmount()) %></td>
             <td> <%= transfer.getDescription()%> </td>
         </tr>

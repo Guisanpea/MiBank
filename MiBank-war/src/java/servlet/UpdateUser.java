@@ -7,11 +7,16 @@ package servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import javax.ejb.EJB;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import mibank.ejb.UserFacade;
+import mibank.entities.User;
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  *
@@ -20,6 +25,8 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "UpdateUser", urlPatterns = {"/updateUser"})
 public class UpdateUser extends HttpServlet {
 
+    @EJB
+    UserFacade userFacade;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -32,7 +39,22 @@ public class UpdateUser extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        User user = userFacade.find(request.getParameter("userId"));
+        String password = request.getParameter("password");
         
+        user.setName(request.getParameter("name"));
+        user.setSurname(request.getParameter("surname"));
+        user.setEmail(request.getParameter("mail"));
+        user.setPhone(Integer.valueOf(request.getParameter("phone")));
+        user.setPhonePrefix(request.getParameter("phone_prefix"));
+        user.setAddress(request.getParameter("address"));
+        if (!password.equals("")){
+            user.setPassword(DigestUtils.sha512Hex(password));
+        }
+        userFacade.edit(user);
+        
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/userAttributes");
+        dispatcher.forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

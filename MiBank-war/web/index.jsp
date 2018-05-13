@@ -29,7 +29,7 @@
                     <hr/>
                     <form method="POST" action="login">
                         <div class="form-group">
-                            <label for="DNI">DNI:</label>
+                            <label for="DNI">ID:</label>
                             <input type="text" class="form-control" name="dni">
                         </div>
                         <div class="form-group">

@@ -6,8 +6,8 @@
 package mibank.entities;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Account.findById", query = "SELECT a FROM Account a WHERE a.id = :id")
     , @NamedQuery(name = "Account.findByCurrency", query = "SELECT a FROM Account a WHERE a.currency = :currency")
     , @NamedQuery(name = "Account.findByCreatedAt", query = "SELECT a FROM Account a WHERE a.createdAt = :createdAt")
-    , @NamedQuery(name = "Account.findByUser", query = "SELECT a FROM Account a WHERE a.userDni = :user")})
+    , @NamedQuery(name = "Account.findByUser", query = "SELECT a FROM Account a WHERE a.user = :user")})
 public class Account implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -60,9 +60,9 @@ public class Account implements Serializable {
     private Date createdAt;
     @JoinColumn(name = "user_dni", referencedColumnName = "dni")
     @ManyToOne(optional = false)
-    private User userDni;
+    private User user;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "account")
-    private Collection<Transfer> transferCollection;
+    private List<Transfer> transferList;
 
     public Account() {
     }
@@ -101,21 +101,21 @@ public class Account implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public User getUserDni() {
-        return userDni;
+    public User getUser() {
+        return user;
     }
 
-    public void setUser(User userDni) {
-        this.userDni = userDni;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @XmlTransient
-    public Collection<Transfer> getTransferCollection() {
-        return transferCollection;
+    public List<Transfer> getTransferList() {
+        return transferList;
     }
 
-    public void setTransferCollection(Collection<Transfer> transferCollection) {
-        this.transferCollection = transferCollection;
+    public void setTransferList(List<Transfer> transferList) {
+        this.transferList = transferList;
     }
 
     @Override

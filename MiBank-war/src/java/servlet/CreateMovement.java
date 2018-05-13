@@ -8,14 +8,19 @@ package servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.ejb.EJB;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import mibank.ejb.AccountFacade;
+import mibank.ejb.TransferFacade;
 import mibank.ejb.UserFacade;
 import mibank.entities.Account;
+import mibank.entities.Employee;
+import mibank.entities.Transfer;
 
 /**
  *
@@ -29,6 +34,9 @@ public class CreateMovement extends HttpServlet {
     
     @EJB
     UserFacade userFacade;
+    
+    @EJB
+    TransferFacade transferFacade;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -42,11 +50,26 @@ public class CreateMovement extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         
-        String userId = request.getParameter("idUser");
-        String amount = request.getParameter("amount");
+        HttpSession session = request.getSession();
+        Employee employee = (Employee) session.getAttribute("employee");
+        
+        String userId = request.getParameter("userId");
+        long amount = Long.valueOf(request.getParameter("amount"));
+        String description = request.getParameter("description");
+        
         Account userAccount = accountFacade.findByUser(userFacade.find(userId));
         
+        Transfer transfer = new Transfer();
         
+        transfer.setAccount(userAccount);
+        transfer.setEmployeeInvolved(employee);
+        transfer.setAmount(amount);
+        transfer.setDescription(description);
+        
+        transferFacade.create(transfer);
+                
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/userAttributes");
+        dispatcher.forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

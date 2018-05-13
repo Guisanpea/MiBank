@@ -27,7 +27,6 @@
             </div>
             <div class="row">
                 <div class="col-md-6">
-                    <h3> Here you can see your transaction list</h3>
                     <%@include file="transactionList.jsp" %>
                 </div>
                 <div class="col-md-6">

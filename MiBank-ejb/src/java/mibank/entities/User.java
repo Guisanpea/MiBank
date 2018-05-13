@@ -6,8 +6,8 @@
 package mibank.entities;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -88,15 +88,17 @@ public class User implements Serializable {
     @Column(name = "phone_prefix")
     private String phonePrefix;
     @Basic(optional = false)
-    @Column(name = "created_at", insertable = false, updatable = false)
+    @NotNull
+    @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @Basic(optional = false)
-    @Column(name = "updated_at", insertable = false, updatable = false)
+    @NotNull
+    @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userDni")
-    private Collection<Account> accountCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private List<Account> accountList;
 
     public User() {
     }
@@ -199,12 +201,12 @@ public class User implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Account> getAccountCollection() {
-        return accountCollection;
+    public List<Account> getAccountList() {
+        return accountList;
     }
 
-    public void setAccountCollection(Collection<Account> accountCollection) {
-        this.accountCollection = accountCollection;
+    public void setAccountList(List<Account> accountList) {
+        this.accountList = accountList;
     }
 
     @Override

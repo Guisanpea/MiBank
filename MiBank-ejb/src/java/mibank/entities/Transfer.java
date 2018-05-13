@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Transfer.findByFromAccountId", query = "SELECT t FROM Transfer t WHERE t.fromAccountId = :fromAccountId")
     , @NamedQuery(name = "Transfer.findByCreatedAt", query = "SELECT t FROM Transfer t WHERE t.createdAt = :createdAt")})
 public class Transfer implements Serializable {
-    
+
     static final public int bankId = 9313;
     static final public int officeId = 1998;
     static final public int control = 05;
@@ -242,5 +242,4 @@ public class Transfer implements Serializable {
         this.fromAccountOffice = officeId;
         this.fromAccountControl = control;
     }
-
 }

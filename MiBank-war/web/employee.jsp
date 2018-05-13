@@ -81,11 +81,11 @@
                                 <td> <%= user.getSurname()%></td>
                                 <td> <%= user.getEmail()%></td>
                                 <td>
-                                    <form action="updateUser" method="POST">
+                                    <form action="userAttributes" method="POST">
                                         <button type="submit" class="btn btn-warning">
                                             <i class="fa fa-pencil fa-lg"></i>
                                         </button>
-                                        <input type="hidden" name="idUser" value="<%= user.getDni()%>"/>
+                                        <input type="hidden" name="userId" value="<%= user.getDni()%>"/>
                                     </form>
                                     <form action='deleteUser' method='POST'>
                                         <button type="submit" class="btn btn-danger"> 

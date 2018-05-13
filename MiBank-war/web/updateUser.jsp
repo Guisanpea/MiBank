@@ -34,11 +34,10 @@
 
                     <h2>Choose an user: </h2>
 
-
                     <form action="userAttributes" method="get">
                         <div class="form-group">
                             <label for="userList">User List</label>
-                            <select class="form-control" name="idUser" id="userList">
+                            <select class="form-control" name="userId" id="userList">
                                 <%  for (User user : userList) {%>
                                 <option value="<%= user.getDni()%>"><%= user.getDni()%></option>
                                 <% }%>
@@ -75,10 +74,6 @@
                             <input type="text" class="form-control col-md-6" name="phone_prefix" value="<%=selectedUser.getPhonePrefix()%>">
                         </div>
                         <div class="form-group row">
-                            <label for="dni" class="form-check-label col-md-3 col-form-label">DNI: </label>
-                            <input type="text" class="form-control col-md-6" name="dni" value="<%=selectedUser.getDni()%>">
-                        </div>
-                        <div class="form-group row">
                             <label for="address" class="form-check-label col-md-3 col-form-label">Address: </label>
                             <input type="text" class="form-control col-md-6" name="address" value="<%=selectedUser.getAddress()%>">
                         </div>
@@ -86,7 +81,7 @@
                             <label for="password" class="form-check-label col-md-3 col-form-label">Password: </label>
                             <input type="password" class="form-control col-md-6" name="password">
                         </div>
-
+                        <input type="hidden" name="userId" value="<%= selectedUser.getDni()%>"/>
                         <button type="submit" class="btn btn-warning">Modify User</button>   
                     </form>
                     <% }%>
@@ -94,6 +89,20 @@
                 <% if (Objects.nonNull(selectedUser)) {%>
                 <div class="col-md-8">
                     <%@include file="transactionList.jsp" %>
+                    <hr/>
+                    <h2>Create a new Movement</h2>
+                    <form action="createMovement" method="POST">
+                        <div class="form-group row">
+                            <label for="amount" class="form-check-label col-md-3 col-form-label">Amount</label>
+                            <input type="number" class="form-control col-md-6" name="amount"/>
+                        </div>
+                        <div class="form-group row">
+                            <label for="description" class="form-check-label col-md-3 col-form-label">Description </label>
+                            <input type="text" class="form-control col-md-6" name="description">
+                        </div>
+                        <input type="hidden" name="userId" value="<%= selectedUser.getDni()%>"/>
+                        <button type="submit" class="btn btn-warning">Create transaction</button> 
+                    </form>
                 </div>
                 <% }%>
             </div>

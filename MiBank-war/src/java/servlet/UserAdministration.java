@@ -55,7 +55,7 @@ public class UserAdministration extends HttpServlet {
         if (checkSession(getServletContext(), session, request, response)) {
             User user = (User) session.getAttribute("user");
             Account userAccount = accountFacade.findByUser(user);
-            List<Transfer> transferList = new ArrayList<>(userAccount.getTransferCollection());
+            List<Transfer> transferList = userAccount.getTransferList();
 
             request.setAttribute("transferList", transferList);
 

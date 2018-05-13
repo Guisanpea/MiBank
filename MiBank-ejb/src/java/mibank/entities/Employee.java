@@ -6,7 +6,7 @@
 package mibank.entities;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -47,7 +47,7 @@ public class Employee implements Serializable {
     @Column(name = "password")
     private String password;
     @OneToMany(mappedBy = "employeeInvolved")
-    private Collection<Transfer> transferCollection;
+    private List<Transfer> transferList;
 
     public Employee() {
     }
@@ -81,12 +81,12 @@ public class Employee implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Transfer> getTransferCollection() {
-        return transferCollection;
+    public List<Transfer> getTransferList() {
+        return transferList;
     }
 
-    public void setTransferCollection(Collection<Transfer> transferCollection) {
-        this.transferCollection = transferCollection;
+    public void setTransferList(List<Transfer> transferList) {
+        this.transferList = transferList;
     }
 
     @Override

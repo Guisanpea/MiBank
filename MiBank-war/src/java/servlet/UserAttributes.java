@@ -51,15 +51,14 @@ public class UserAttributes extends HttpServlet {
         List<Transfer> transferList = new ArrayList<>();
         User user = null;
         
-        String userId = request.getParameter("idUser");
+        String userId = request.getParameter("userId");
         List<User> userList = userFacade.findAll();
         
         if (nonNull(userId)) {
             user = userFacade.find(userId);
             Account userAccount = accountFacade.findByUser(user);
-            transferList.addAll(userAccount.getTransferCollection());
+            transferList = userAccount.getTransferList();
         }
-
 
         request.setAttribute("userList", userList);
         request.setAttribute("transferList", transferList);
