@@ -14,7 +14,7 @@
                     <img class="img-fluid" src="resources/MiBankLogo.png">
                 </div>
                 <div class="col-md-8 text-right">
-                    <h2 style="color: DarkGray;">Is not about me <br/> it is about us</h2>
+                    <h2 style="color: DarkGray;">Share resources <br/> in the world of today</h2>
                 </div>
             </div>
         </div>

@@ -6,15 +6,14 @@
 package mibank.entities;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Date;
-import static java.util.Objects.nonNull;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -35,42 +34,61 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Transfer.findAll", query = "SELECT t FROM Transfer t")
     , @NamedQuery(name = "Transfer.findById", query = "SELECT t FROM Transfer t WHERE t.id = :id")
-    , @NamedQuery(name = "Transfer.findByDNI", query = "SELECT t FROM Transfer t WHERE t.account.user.dni = :dni")
-    , @NamedQuery(name = "Transfer.findByAccountFrom", query = "SELECT t FROM Transfer t WHERE t.accountFrom = :accountFrom")
     , @NamedQuery(name = "Transfer.findByAmount", query = "SELECT t FROM Transfer t WHERE t.amount = :amount")
     , @NamedQuery(name = "Transfer.findByDescription", query = "SELECT t FROM Transfer t WHERE t.description = :description")
+    , @NamedQuery(name = "Transfer.findByAccountBank", query = "SELECT t FROM Transfer t WHERE t.accountBank = :accountBank")
+    , @NamedQuery(name = "Transfer.findByAccountOffice", query = "SELECT t FROM Transfer t WHERE t.accountOffice = :accountOffice")
+    , @NamedQuery(name = "Transfer.findByAccountControl", query = "SELECT t FROM Transfer t WHERE t.accountControl = :accountControl")
+    , @NamedQuery(name = "Transfer.findByFromAccountBank", query = "SELECT t FROM Transfer t WHERE t.fromAccountBank = :fromAccountBank")
+    , @NamedQuery(name = "Transfer.findByFromAccountOffice", query = "SELECT t FROM Transfer t WHERE t.fromAccountOffice = :fromAccountOffice")
+    , @NamedQuery(name = "Transfer.findByFromAccountControl", query = "SELECT t FROM Transfer t WHERE t.fromAccountControl = :fromAccountControl")
+    , @NamedQuery(name = "Transfer.findByFromAccountId", query = "SELECT t FROM Transfer t WHERE t.fromAccountId = :fromAccountId")
     , @NamedQuery(name = "Transfer.findByCreatedAt", query = "SELECT t FROM Transfer t WHERE t.createdAt = :createdAt")})
 public class Transfer implements Serializable {
-
-    @Column(name = "amount")
-    private BigInteger amount;
+    
+    static final public int bankId = 9313;
+    static final public int officeId = 1998;
+    static final public int control = 05;
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id")
     private Integer id;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "amount")
+    private long amount;
     @Size(max = 45)
     @Column(name = "description")
     private String description;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "account_bank")
+    private int accountBank;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "account_office")
+    private int accountOffice;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "account_control")
+    private int accountControl;
+    @Column(name = "from_account_bank")
+    private Integer fromAccountBank;
+    @Column(name = "from_account_office")
+    private Integer fromAccountOffice;
+    @Column(name = "from_account_control")
+    private Integer fromAccountControl;
+    @Column(name = "from_account_id")
+    private Integer fromAccountId;
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    @JoinColumns({
-        @JoinColumn(name = "account_bank", referencedColumnName = "bank")
-        , @JoinColumn(name = "account_office", referencedColumnName = "office")
-        , @JoinColumn(name = "account_control", referencedColumnName = "control")
-        , @JoinColumn(name = "account_id", referencedColumnName = "id")})
+    @JoinColumn(name = "account_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Account account;
-    @JoinColumns({
-        @JoinColumn(name = "from_account_bank", referencedColumnName = "bank")
-        , @JoinColumn(name = "from_account_office", referencedColumnName = "office")
-        , @JoinColumn(name = "from_account_control", referencedColumnName = "control")
-        , @JoinColumn(name = "from_account_id", referencedColumnName = "id")})
-    @ManyToOne
-    private Account accountFrom;
     @JoinColumn(name = "employee_involved", referencedColumnName = "id")
     @ManyToOne
     private Employee employeeInvolved;
@@ -82,9 +100,12 @@ public class Transfer implements Serializable {
         this.id = id;
     }
 
-    public Transfer(Integer id, BigInteger amount) {
+    public Transfer(Integer id, long amount, int accountBank, int accountOffice, int accountControl) {
         this.id = id;
         this.amount = amount;
+        this.accountBank = accountBank;
+        this.accountOffice = accountOffice;
+        this.accountControl = accountControl;
     }
 
     public Integer getId() {
@@ -95,6 +116,13 @@ public class Transfer implements Serializable {
         this.id = id;
     }
 
+    public long getAmount() {
+        return amount;
+    }
+
+    public void setAmount(long amount) {
+        this.amount = amount;
+    }
 
     public String getDescription() {
         return description;
@@ -102,6 +130,62 @@ public class Transfer implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getAccountBank() {
+        return accountBank;
+    }
+
+    public void setAccountBank(int accountBank) {
+        this.accountBank = accountBank;
+    }
+
+    public int getAccountOffice() {
+        return accountOffice;
+    }
+
+    public void setAccountOffice(int accountOffice) {
+        this.accountOffice = accountOffice;
+    }
+
+    public int getAccountControl() {
+        return accountControl;
+    }
+
+    public void setAccountControl(int accountControl) {
+        this.accountControl = accountControl;
+    }
+
+    public Integer getFromAccountBank() {
+        return fromAccountBank;
+    }
+
+    public void setFromAccountBank(Integer fromAccountBank) {
+        this.fromAccountBank = fromAccountBank;
+    }
+
+    public Integer getFromAccountOffice() {
+        return fromAccountOffice;
+    }
+
+    public void setFromAccountOffice(Integer fromAccountOffice) {
+        this.fromAccountOffice = fromAccountOffice;
+    }
+
+    public Integer getFromAccountControl() {
+        return fromAccountControl;
+    }
+
+    public void setFromAccountControl(Integer fromAccountControl) {
+        this.fromAccountControl = fromAccountControl;
+    }
+
+    public Integer getFromAccountId() {
+        return fromAccountId;
+    }
+
+    public void setFromAccountId(Integer fromAccountId) {
+        this.fromAccountId = fromAccountId;
     }
 
     public Date getCreatedAt() {
@@ -118,21 +202,6 @@ public class Transfer implements Serializable {
 
     public void setAccount(Account account) {
         this.account = account;
-    }
-
-    public Account getAccountFrom() {
-        return accountFrom;
-    }
-    public String getOrigin(){
-        return nonNull(accountFrom) ? accountFrom.toString() : getType();
-    }
-
-    private String getType() {
-        return amount.compareTo(BigInteger.ZERO) < 0 ? "STAKE" : "SETTLEMENT";
-    }
-
-    public void setAccountFrom(Account accountFrom) {
-        this.accountFrom = accountFrom;
     }
 
     public Employee getEmployeeInvolved() {
@@ -168,12 +237,10 @@ public class Transfer implements Serializable {
         return "mibank.ejb.Transfer[ id=" + id + " ]";
     }
 
-    public BigInteger getAmount() {
-        return amount;
+    public void setFromLocalAccount() {
+        this.fromAccountBank = bankId;
+        this.fromAccountOffice = officeId;
+        this.fromAccountControl = control;
     }
 
-    public void setAmount(BigInteger amount) {
-        this.amount = amount;
-    }
-    
 }

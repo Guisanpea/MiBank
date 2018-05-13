@@ -6,14 +6,15 @@
 package mibank.entities;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -36,62 +37,52 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Account.findAll", query = "SELECT a FROM Account a")
-    , @NamedQuery(name = "Account.findByBank", query = "SELECT a FROM Account a WHERE a.accountPK.bank = :bank")
-    , @NamedQuery(name = "Account.findByOffice", query = "SELECT a FROM Account a WHERE a.accountPK.office = :office")
-    , @NamedQuery(name = "Account.findByControl", query = "SELECT a FROM Account a WHERE a.accountPK.control = :control")
-    , @NamedQuery(name = "Account.findById", query = "SELECT a FROM Account a WHERE a.accountPK.id = :id")
-    , @NamedQuery(name = "Account.findByFullNumber", query = "SELECT a FROM Account a WHERE a.accountPK.bank = :bank"
-            + "                                                                       AND a.accountPK.office = :office"
-            + "                                                                       AND a.accountPK.control = :control"
-            + "                                                                       AND a.accountPK.id = :id")    
+    , @NamedQuery(name = "Account.findById", query = "SELECT a FROM Account a WHERE a.id = :id")
     , @NamedQuery(name = "Account.findByCurrency", query = "SELECT a FROM Account a WHERE a.currency = :currency")
     , @NamedQuery(name = "Account.findByCreatedAt", query = "SELECT a FROM Account a WHERE a.createdAt = :createdAt")
-    , @NamedQuery(name = "Account.findByUser", query = "SELECT a FROM Account a WHERE a.user = :user")})
+    , @NamedQuery(name = "Account.findByUser", query = "SELECT a FROM Account a WHERE a.userDni = :user")})
 public class Account implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @EmbeddedId
-    protected AccountPK accountPK;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 3)
     @Column(name = "currency")
     private String currency;
     @Basic(optional = false)
-    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "created_at", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @JoinColumn(name = "user_dni", referencedColumnName = "dni")
     @ManyToOne(optional = false)
-    private User user;
+    private User userDni;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "account")
     private Collection<Transfer> transferCollection;
-    @OneToMany(mappedBy = "accountFrom")
-    private Collection<Transfer> transferCollection1;
 
     public Account() {
     }
 
-    public Account(AccountPK accountPK) {
-        this.accountPK = accountPK;
+    public Account(Integer id) {
+        this.id = id;
     }
 
-    public Account(AccountPK accountPK, String currency, Date createdAt) {
-        this.accountPK = accountPK;
+    public Account(Integer id, String currency, Date createdAt) {
+        this.id = id;
         this.currency = currency;
         this.createdAt = createdAt;
     }
 
-    public Account(int bank, int office, int control) {
-        this.accountPK = new AccountPK(bank, office, control);
+    public Integer getId() {
+        return id;
     }
 
-    public AccountPK getAccountPK() {
-        return accountPK;
-    }
-
-    public void setAccountPK(AccountPK accountPK) {
-        this.accountPK = accountPK;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getCurrency() {
@@ -110,12 +101,12 @@ public class Account implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public User getUser() {
-        return user;
+    public User getUserDni() {
+        return userDni;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(User userDni) {
+        this.userDni = userDni;
     }
 
     @XmlTransient
@@ -127,19 +118,10 @@ public class Account implements Serializable {
         this.transferCollection = transferCollection;
     }
 
-    @XmlTransient
-    public Collection<Transfer> getTransferCollection1() {
-        return transferCollection1;
-    }
-
-    public void setTransferCollection1(Collection<Transfer> transferCollection1) {
-        this.transferCollection1 = transferCollection1;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (accountPK != null ? accountPK.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -150,7 +132,7 @@ public class Account implements Serializable {
             return false;
         }
         Account other = (Account) object;
-        if ((this.accountPK == null && other.accountPK != null) || (this.accountPK != null && !this.accountPK.equals(other.accountPK))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -158,11 +140,7 @@ public class Account implements Serializable {
 
     @Override
     public String toString() {
-        return "mibank.ejb.Account[ accountPK=" + accountPK + " ]";
-    }
-
-    public BigInteger getBalance() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return "mibank.ejb.Account[ id=" + id + " ]";
     }
     
 }

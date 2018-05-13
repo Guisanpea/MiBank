@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import mibank.ejb.AccountFacade;
 import mibank.ejb.UserFacade;
 import mibank.entities.Account;
-import mibank.entities.AccountPK;
 import mibank.entities.User;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -122,7 +121,7 @@ public class CreateUser extends HttpServlet {
     }
 
     private void addAccount(User user) {
-        Account userAccount = new Account(new AccountPK(bankId, officeId, control));
+        Account userAccount = new Account();
         userAccount.setCurrency("EUR");
         userAccount.setUser(user);
         

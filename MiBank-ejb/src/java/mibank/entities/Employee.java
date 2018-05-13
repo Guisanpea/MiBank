@@ -43,7 +43,7 @@ public class Employee implements Serializable {
     @Size(max = 45)
     @Column(name = "user_name")
     private String userName;
-    @Size(max = 45)
+    @Size(max = 128)
     @Column(name = "password")
     private String password;
     @OneToMany(mappedBy = "employeeInvolved")

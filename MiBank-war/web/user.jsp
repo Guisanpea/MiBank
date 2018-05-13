@@ -39,7 +39,7 @@
                             <input type="text" class="form-control col-md-6" name="accountBank">
                         </div>
                         <div class="form-group row">
-                            <label for="accountOffice" class="form-check-label col-md-3 col-form-label">Ofice: </label>
+                            <label for="accountOffice" class="form-check-label col-md-3 col-form-label">Office: </label>
                             <input type="text" class="form-control col-md-6" name="accountOffice">
                         </div>
                         <div class="form-group row">
@@ -47,7 +47,7 @@
                             <input type="text" class="form-control col-md-6" name="phone">
                         </div>
                         <div class="form-group row">
-                            <label for="accountId" class="form-check-label col-md-3 col-form-label">AccountId</label>
+                            <label for="accountId" class="form-check-label col-md-3 col-form-label">Account Id</label>
                             <input type="text" class="form-control col-md-6" name="accountId">
                         </div>
                         <hr/>

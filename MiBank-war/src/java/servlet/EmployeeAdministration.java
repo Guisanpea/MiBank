@@ -7,9 +7,7 @@ package servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.math.BigInteger;
-import java.util.Objects;
-import static java.util.Objects.nonNull;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -17,24 +15,18 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import mibank.ejb.AccountFacade;
-import mibank.ejb.TransferFacade;
-import mibank.entities.Account;
-import mibank.entities.Transfer;
+import mibank.ejb.UserFacade;
 import mibank.entities.User;
 
 /**
  *
  * @author ubuntie
  */
-@WebServlet(name = "CreateTransfer", urlPatterns = {"/CreateTransfer"})
-public class CreateTransaction extends HttpServlet {
+@WebServlet(name = "Employee", urlPatterns = {"/employee"})
+public class EmployeeAdministration extends HttpServlet {
 
     @EJB
-    AccountFacade accountFacade;
-
-    @EJB
-    TransferFacade transferFacade;
+    public UserFacade userFacade;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -47,40 +39,14 @@ public class CreateTransaction extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-
-        User user = ((User) request.getSession().getAttribute("user"));
-        String destinationBank = request.getParameter("accountBank")
-                + request.getParameter("accountOffice")
-                + request.getParameter("accountControl")
-                + request.getParameter("accountId");
-
-        Account destination = accountFacade.findByAccountNumber(destinationBank);
-
-        Account userAccount = accountFacade.findByUser(user);
-        if (nonNull(destination)) {
-            long amount = Long.valueOf(request.getParameter("amount"));
-            if (amount < 0) {
-                request.setAttribute("notFundsEnough", "");
-            } else {
-                String description = request.getParameter("description");
-                Transfer transfer = new Transfer();
-                transfer.setAmount(amount);
-                transfer.setDescription(description);
-                
-                transfer.setFromAccountId(userAccount.getId());
-                transfer.setFromLocalAccount();
-                
-                
-                transfer.setAccount(destination);
-                
-                transferFacade.create(transfer);
-            }
-        } else {
-            request.setAttribute("nonExistingAccount", "");
-        }
-
-        RequestDispatcher requestDispatcher = getServletContext().getRequestDispatcher("/user");
-        requestDispatcher.forward(request, response);
+        
+        List<User> userList = userFacade.findAll();
+        
+        request.setAttribute("userList", userList);
+        
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/employee.jsp");
+        
+        dispatcher.forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

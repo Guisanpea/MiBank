@@ -7,31 +7,28 @@ package servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
-import static java.util.Objects.isNull;
 import javax.ejb.EJB;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import mibank.ejb.TransferFacade;
-import mibank.entities.Transfer;
-import static support.SessionSupport.checkSession;
+import mibank.ejb.AccountFacade;
+import mibank.ejb.UserFacade;
+import mibank.entities.Account;
 
 /**
  *
  * @author ubuntie
  */
-@WebServlet(name = "User", urlPatterns = {"/user"})
-public class User extends HttpServlet {
+@WebServlet(name = "CreateMovement", urlPatterns = {"/createMovement"})
+public class CreateMovement extends HttpServlet {
 
     @EJB
-    private TransferFacade transferFacade;
-
+    AccountFacade accountFacade;
+    
+    @EJB
+    UserFacade userFacade;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -44,22 +41,15 @@ public class User extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession();
-
-        if (checkSession(getServletContext(), session, request, response)) {
-            mibank.entities.User user = (mibank.entities.User) session.getAttribute("user");
-            List<Transfer> transferList = transferFacade.getByUser(user);
-
-            request.setAttribute("transferList", transferList);
-
-            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/user.jsp");
-            dispatcher.forward(request, response);
-        }
-
+        
+        String userId = request.getParameter("idUser");
+        String amount = request.getParameter("amount");
+        Account userAccount = accountFacade.findByUser(userFacade.find(userId));
+        
+        
     }
 
-
-// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
