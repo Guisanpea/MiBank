@@ -26,10 +26,6 @@ import org.apache.commons.codec.digest.DigestUtils;
  */
 @WebServlet(name = "CreateUser", urlPatterns = {"/CreateUser"})
 public class CreateUser extends HttpServlet {
-    
-    final private int bankId = 9313;
-    final private int officeId = 1998;
-    final private int control = 05;
 
     @EJB
     private UserFacade userFacade;

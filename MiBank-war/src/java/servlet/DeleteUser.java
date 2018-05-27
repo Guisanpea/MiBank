@@ -14,7 +14,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import mibank.ejb.AccountFacade;
 import mibank.ejb.UserFacade;
+import mibank.entities.Account;
 import mibank.entities.User;
 
 /**
@@ -26,6 +28,10 @@ public class DeleteUser extends HttpServlet {
 
     @EJB
     UserFacade userFacade;
+
+    @EJB
+    AccountFacade accountFacade;
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -38,14 +44,17 @@ public class DeleteUser extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
+
         String dni = request.getParameter("dni");
-        
+
         User toDelete = userFacade.find(dni);
+        Account userAccount = accountFacade.findByUser(toDelete);
+
+        accountFacade.remove(userAccount);
         userFacade.remove(toDelete);
-        
+
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/employee");
-        
+
         dispatcher.forward(request, response);
     }
 

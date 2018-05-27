@@ -88,16 +88,14 @@ public class User implements Serializable {
     @Column(name = "phone_prefix")
     private String phonePrefix;
     @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_at")
+    @Column(name = "created_at", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "user")
     private List<Account> accountList;
 
     public User() {

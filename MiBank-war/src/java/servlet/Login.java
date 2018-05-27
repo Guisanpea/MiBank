@@ -144,8 +144,6 @@ public class Login extends HttpServlet {
     }
     
     private boolean correctPassword(Employee employee, String password) {
-        System.out.println(employee.getPassword());
-        System.out.println(DigestUtils.sha512Hex(password));
         return employee.getPassword().equalsIgnoreCase(DigestUtils.sha512Hex(password));
     }
 }

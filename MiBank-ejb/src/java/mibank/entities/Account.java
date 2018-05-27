@@ -61,7 +61,7 @@ public class Account implements Serializable {
     @JoinColumn(name = "user_dni", referencedColumnName = "dni")
     @ManyToOne(optional = false)
     private User user;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "account")
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "account")
     private List<Transfer> transferList;
 
     public Account() {
@@ -116,6 +116,10 @@ public class Account implements Serializable {
 
     public void setTransferList(List<Transfer> transferList) {
         this.transferList = transferList;
+    }
+    
+    public static boolean checkControlNumber (int bankId, int officeId, int controlNumber){
+        return ((bankId * officeId) % 100) == controlNumber;
     }
 
     @Override

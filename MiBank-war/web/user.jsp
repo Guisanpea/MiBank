@@ -4,12 +4,15 @@
     Author     : ubuntie
 --%>
 
+<%@page import="java.lang.String"%>
 <%@page import="mibank.entities.Transfer"%>
 <%@page import="java.util.List"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <%
     User user = (User) request.getSession(false).getAttribute("user");
+    int balance = (Integer) request.getAttribute("balance");
+    String currency = (String) request.getAttribute("currency");
 %>
 <!DOCTYPE html>
 <html>
@@ -26,12 +29,15 @@
                 <h1>Welcome back <%=user.getName() + " " + user.getSurname()%>! </h1>
             </div>
             <div class="row">
+                <h1>Your current balance is <%=Integer.toString(balance) + " " + currency%> </h1>
+            </div>
+            <div class="row">
                 <div class="col-md-6">
                     <%@include file="transactionList.jsp" %>
                 </div>
                 <div class="col-md-6">
                     <h3>Create new transaction</h3>
-                    <form action="createTransaction" method="post">
+                    <form action="createTransfer" method="post">
                         <h6>Destination Account</h6>
                         <div class="form-group row">
                             <label for="accountBank" class="form-check-label col-md-3 col-form-label">Entity: </label>
@@ -43,7 +49,7 @@
                         </div>
                         <div class="form-group row">
                             <label for="accountControl" class="form-check-label col-md-3 col-form-label">Control: </label>
-                            <input type="text" class="form-control col-md-6" name="phone">
+                            <input type="text" class="form-control col-md-6" name="accountControl">
                         </div>
                         <div class="form-group row">
                             <label for="accountId" class="form-check-label col-md-3 col-form-label">Account Id</label>
@@ -58,8 +64,14 @@
                             <label for="description" class="form-check-label col-md-3 col-form-label">Description: </label>
                             <input type="text" class="form-control col-md-6" name="description">
                         </div>
-
+                        <button type="submit" class="btn btn-primary">Transfer</button>
                     </form>
+                    <%  String errorMessage = (String) request.getAttribute("error");
+                        if (Objects.nonNull(errorMessage)) {%>
+                    <div class="alert alert-warning" role="alert">
+                        <%= errorMessage%>
+                    </div>
+                    <% } %>
                 </div>
             </div>
         </div>

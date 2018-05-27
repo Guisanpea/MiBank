@@ -55,14 +55,34 @@ public class UserAdministration extends HttpServlet {
         if (checkSession(getServletContext(), session, request, response)) {
             User user = (User) session.getAttribute("user");
             Account userAccount = accountFacade.findByUser(user);
+            
             List<Transfer> transferList = userAccount.getTransferList();
+            List<Transfer> madeTransferList = transferFacade.findMadeTransferences(userAccount.getId());
+            
+            int balance = getBalance(transferList, madeTransferList);
 
-            request.setAttribute("transferList", transferList);
+            setAttributes(request, transferList, madeTransferList, balance, userAccount);
 
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/user.jsp");
             dispatcher.forward(request, response);
         }
 
+    }
+
+    private void setAttributes(HttpServletRequest request, List<Transfer> transferList, List<Transfer> madeTransferList, int balance, Account userAccount) {
+        request.setAttribute("transferList", transferList);
+        request.setAttribute("madeTransferList", madeTransferList);
+        request.setAttribute("balance", balance);
+        request.setAttribute("currency", userAccount.getCurrency());
+    }
+
+    private int getBalance(List<Transfer> transferList, List<Transfer> madeTransferList) {
+        int balance = 0;
+        for(Transfer transfer : transferList)
+            balance += transfer.getAmount();
+        for(Transfer transfer : madeTransferList)
+            balance -= transfer.getAmount();
+        return balance;
     }
 
 

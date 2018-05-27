@@ -9,6 +9,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import mibank.entities.Transfer;
 import mibank.entities.User;
 
@@ -31,7 +32,10 @@ public class TransferFacade extends AbstractFacade<Transfer> {
         super(Transfer.class);
     }
     
-    public List<Transfer> getByUser(User user){
-        return em.createNamedQuery("Transfer.findByDNI").setParameter("dni", user.getDni()).getResultList();
+    public List<Transfer> findMadeTransferences(int accountId){
+        Query query = em.createNamedQuery("Transfer.findByFromAccountId");
+        query.setParameter("fromAccountId", accountId);
+        
+        return query.getResultList();
     }
 }

@@ -46,9 +46,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Transfer.findByCreatedAt", query = "SELECT t FROM Transfer t WHERE t.createdAt = :createdAt")})
 public class Transfer implements Serializable {
 
-    static final public int bankId = 9313;
-    static final public int officeId = 1998;
-    static final public int control = 05;
+    static final public int BANKID = 9313;
+    static final public int OFFICEID = 1998;
+    static final public int CONTROL = 05;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -83,7 +83,8 @@ public class Transfer implements Serializable {
     private Integer fromAccountControl;
     @Column(name = "from_account_id")
     private Integer fromAccountId;
-    @Column(name = "created_at", insertable = false, updatable = false)
+    @NotNull
+    @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     @JoinColumn(name = "account_id", referencedColumnName = "id")
@@ -238,8 +239,8 @@ public class Transfer implements Serializable {
     }
 
     public void setFromLocalAccount() {
-        this.fromAccountBank = bankId;
-        this.fromAccountOffice = officeId;
-        this.fromAccountControl = control;
+        this.fromAccountBank = BANKID;
+        this.fromAccountOffice = OFFICEID;
+        this.fromAccountControl = CONTROL;
     }
 }

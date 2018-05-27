@@ -7,26 +7,20 @@ package servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import mibank.ejb.UserFacade;
-import mibank.entities.User;
-import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  *
  * @author ubuntie
  */
-@WebServlet(name = "UpdateUser", urlPatterns = {"/updateUser"})
-public class UpdateUser extends HttpServlet {
+@WebServlet(name = "LogOut", urlPatterns = {"/logOut"})
+public class LogOut extends HttpServlet {
 
-    @EJB
-    UserFacade userFacade;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -39,26 +33,11 @@ public class UpdateUser extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        User user = userFacade.find(request.getParameter("userId"));
-        String password = request.getParameter("password");
         
-        editUser(user, request, password);
+        request.getSession().invalidate();
         
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/userAttributes");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
         dispatcher.forward(request, response);
-    }
-
-    private void editUser(User user, HttpServletRequest request, String password) throws NumberFormatException {
-        user.setName(request.getParameter("name"));
-        user.setSurname(request.getParameter("surname"));
-        user.setEmail(request.getParameter("mail"));
-        user.setPhone(Integer.valueOf(request.getParameter("phone")));
-        user.setPhonePrefix(request.getParameter("phone_prefix"));
-        user.setAddress(request.getParameter("address"));
-        if (!password.equals("")){
-            user.setPassword(DigestUtils.sha512Hex(password));
-        }
-        userFacade.edit(user);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

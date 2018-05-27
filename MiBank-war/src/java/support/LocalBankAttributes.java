@@ -10,7 +10,7 @@ package support;
  * @author ubuntie
  */
 public class LocalBankAttributes {
-    static final public int bankId = 9313;
-    static final public int officeId = 1998;
-    static final public int control = 05;
+    static final public int BANKID = 9313;
+    static final public int OFFICEID = 1998;
+    static final public int CONTROL = 74;
 }

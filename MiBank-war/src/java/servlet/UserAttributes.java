@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import mibank.ejb.AccountFacade;
+import mibank.ejb.TransferFacade;
 import mibank.ejb.UserFacade;
 import mibank.entities.Account;
 import mibank.entities.Transfer;
@@ -35,6 +36,9 @@ public class UserAttributes extends HttpServlet {
 
     @EJB
     AccountFacade accountFacade;
+    
+    @EJB
+    TransferFacade transferFacade;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -48,24 +52,34 @@ public class UserAttributes extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        List<Transfer> transferList = new ArrayList<>();
         User user = null;
         
+        List<Transfer> transferList = new ArrayList<>();
+        List<Transfer> madeTransferList = new ArrayList<>();
+        
+
         String userId = request.getParameter("userId");
         List<User> userList = userFacade.findAll();
-        
+
         if (nonNull(userId)) {
             user = userFacade.find(userId);
             Account userAccount = accountFacade.findByUser(user);
             transferList = userAccount.getTransferList();
+            madeTransferList = transferFacade.findMadeTransferences(userAccount.getId());
         }
 
-        request.setAttribute("userList", userList);
-        request.setAttribute("transferList", transferList);
-        request.setAttribute("user", user);
+        setAttributes(request, userList, transferList, madeTransferList, user);
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("/updateUser.jsp");
         dispatcher.forward(request, response);
+    }
+
+    private void setAttributes(HttpServletRequest request, List<User> userList, List<Transfer> transferList, List<Transfer> madeTransferList, User user) {
+        request.setAttribute("userList", userList);
+        request.setAttribute("transferList", transferList);
+        request.setAttribute("madeTransferList", madeTransferList);
+
+        request.setAttribute("user", user);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
