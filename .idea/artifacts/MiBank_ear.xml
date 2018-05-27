@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-ear" name="MiBank-ear">
+    <output-path>$PROJECT_DIR$/out/artifacts/MiBank_ear</output-path>
+    <root id="root">
+      <element id="artifact" artifact-name="MiBank-ejb:ejb exploded" />
+      <element id="artifact" artifact-name="MiBank-war:war exploded" />
+    </root>
+  </artifact>
+</component>
