@@ -1,0 +1,6 @@
+rootProject.name = 'MiBank'
+include ':war'
+include ':ejb'
+
+project(':war').projectDir = "$rootDir/war" as File
+project(':ejb').projectDir = "$rootDir/ejb" as File
